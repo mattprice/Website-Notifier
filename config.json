@@ -1,0 +1,16 @@
+{
+  "websites":
+  {
+    "http://web2.utc.edu/~pbj882/MATH2200-1/MATH2200-1Schedule.pdf":
+    {
+      "alert"    : "The Linear Algebra schedule has been updated.",
+      "frequency": 1440
+    },
+
+    "http://web2.utc.edu/~pbj882/MATH2200-1/MATH2200Homework.pdf":
+    {
+      "alert"    : "The Linea Algebra homework page has been updated.",
+      "frequency": 1400
+    }
+  }
+}
