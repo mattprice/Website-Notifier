@@ -38,11 +38,25 @@ config['websites'].each do |site, options|
       time_since = time_since * 24 * 60
 
       if time_since.to_i < options['frequency']
-         # puts "Should not check #{site} for update."
+         if config['debug']
+            # Calculate how many minutes/hours until the next check.
+            time_remaining = options['frequency'] - time_since.to_i
+
+            if time_remaining > 1440
+               pretty_time = "#{time_remaining / 60 / 24} day(s)"
+            elsif time_remaining > 24
+               pretty_time = "#{time_remaining / 60} hour(s)"
+            else
+               pretty_time = "#{time_remaining} minute(s)"
+            end
+
+            puts "DEBUG: Skipping #{site}. Rechecking in #{pretty_time}."
+         end
+
          next
       end
    else
-      puts "Adding #{site} to the database."
+      puts "DEBUG: Adding a new website to the database: #{site}" if config['debug']
       db[site] = {}
    end
 

@@ -1,4 +1,6 @@
 {
+  "debug": false,
+
   "websites":
   {
     "http://web2.utc.edu/~pbj882/MATH2200-1/MATH2200-1Schedule.pdf":
@@ -10,7 +12,7 @@
     "http://web2.utc.edu/~pbj882/MATH2200-1/MATH2200Homework.pdf":
     {
       "alert"    : "The Linea Algebra homework page has been updated.",
-      "frequency": 1400
+      "frequency": 1440
     }
   }
 }
