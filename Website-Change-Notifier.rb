@@ -1,20 +1,31 @@
 #!/usr/bin/env ruby
-require 'open-uri'
 require 'digest/md5'
 require 'json'
+require 'open-uri'
+require 'terminal-notifier'
 
 CONFIG_FILE = 'config.json'
 DB_FILE     = 'db.json'
 
 # Make sure the configuration file exits.
 unless File.exists?(CONFIG_FILE)
-   puts "ERROR: The configuration file `#{CONFIG_FILE}` does not exist."
+   TerminalNotifier.notify(
+      "ERROR: The configuration file `#{CONFIG_FILE}` does not exist.",
+      :title => "Website Change Notifier"
+   )
+
+   # puts "ERROR: The configuration file `#{CONFIG_FILE}` does not exist."
    exit
 end
 
 # Make sure the cnfiguration file is not empty.
 if File.zero?(CONFIG_FILE)
-   puts "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?"
+   TerminalNotifier.notify(
+      "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?",
+      :title => "Website Change Notifier"
+   )
+
+   # puts "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?"
    exit
 end
 
@@ -50,14 +61,25 @@ config['websites'].each do |site, options|
                pretty_time = "#{time_remaining} minute(s)"
             end
 
-            puts "DEBUG: Skipping #{site}. Rechecking in #{pretty_time}."
+            TerminalNotifier.notify(
+               "Skipping #{site}. Rechecking in #{pretty_time}.",
+               :title => "Website Notifier [DEBUG]"
+            )
+
+            # puts "DEBUG: Skipping #{site}. Rechecking in #{pretty_time}."
          end
 
          next
       end
    else
-      puts "DEBUG: Adding a new website to the database: #{site}" if config['debug']
       db[site] = {}
+
+      TerminalNotifier.notify(
+         "Adding a new website to the database: #{site}",
+         :title => "Website Notifier [DEBUG]"
+      ) if config['debug']
+
+      # puts "DEBUG: Adding a new website to the database: #{site}" if config['debug']
    end
 
    # Update the MD5 for any remaining websites.
@@ -66,7 +88,13 @@ config['websites'].each do |site, options|
    end
 
    if db[site].has_key?('md5') && db[site]['md5'] != md5
-      puts "ALERT: #{options['alert']}"
+      TerminalNotifier.notify(
+         options['alert'],
+         :open => site,
+         :title => "Website Change Notifier"
+      )
+
+      # puts "ALERT: #{options['alert']}"
    end
 
    db[site]['md5'] = md5
