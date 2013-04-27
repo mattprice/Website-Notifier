@@ -32,22 +32,22 @@ DB_FILE     = 'db.json'
 # Make sure the configuration file exits.
 unless File.exists? CONFIG_FILE
    TerminalNotifier.notify(
-      "ERROR: The configuration file `#{CONFIG_FILE}` does not exist.",
+      'ERROR: The configuration file does not exist.',
       :title => 'Website Notifier'
    )
 
-   # puts "ERROR: The configuration file `#{CONFIG_FILE}` does not exist."
+   # puts 'ERROR: The configuration file does not exist.'
    exit
 end
 
 # Make sure the cnfiguration file is not empty.
 if File.zero? CONFIG_FILE
    TerminalNotifier.notify(
-      "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?",
+      'ERROR: The configuration file is empty. Did you forget to set it up?',
       :title => 'Website Notifier'
    )
 
-   # puts "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?"
+   # puts 'ERROR: The configuration file is empty. Did you forget to set it up?'
    exit
 end
 
@@ -114,14 +114,14 @@ config.each do |site, options|
    if db[site].has_key?('md5') && db[site]['md5'] != md5
       TerminalNotifier.notify(
          options['alert'],
-         :open => site,
+         :open  => site,
          :title => 'Website Notifier'
       )
 
       # puts #{options['alert']}
    end
 
-   db[site]['md5'] = md5
+   db[site]['md5']       = md5
    db[site]['lastcheck'] = DateTime.now.to_s
 end
 
