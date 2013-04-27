@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#
 # Copyright (c) 2013 Matthew Price, http://mattprice.me/
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,15 +24,16 @@ require 'digest/md5'
 require 'json'
 require 'open-uri'
 require 'terminal-notifier'
+require 'yaml'
 
-CONFIG_FILE = 'config.json'
+CONFIG_FILE = 'config.yml'
 DB_FILE     = 'db.json'
 
 # Make sure the configuration file exits.
-unless File.exists?(CONFIG_FILE)
+unless File.exists? CONFIG_FILE
    TerminalNotifier.notify(
       "ERROR: The configuration file `#{CONFIG_FILE}` does not exist.",
-      :title => "Website Notifier"
+      :title => 'Website Notifier'
    )
 
    # puts "ERROR: The configuration file `#{CONFIG_FILE}` does not exist."
@@ -39,10 +41,10 @@ unless File.exists?(CONFIG_FILE)
 end
 
 # Make sure the cnfiguration file is not empty.
-if File.zero?(CONFIG_FILE)
+if File.zero? CONFIG_FILE
    TerminalNotifier.notify(
       "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?",
-      :title => "Website Notifier"
+      :title => 'Website Notifier'
    )
 
    # puts "ERROR: The configuration file `#{CONFIG_FILE}` is emtpy. Did you forget to set it up?"
@@ -50,20 +52,22 @@ if File.zero?(CONFIG_FILE)
 end
 
 # Read in the configuration file and attempt to parse it.
-config = File.open(CONFIG_FILE, 'r') { |file|
-   JSON.parse(file.read)
-}
+config = YAML.load_file CONFIG_FILE
 
 # Read in the database file and attempt to parse it.
-File.new(DB_FILE, 'w+') unless File.exists?(DB_FILE)
-db = File.open(DB_FILE,'r+') { |file|
-   (file.size > 0) ?  JSON.parse(file.read) : {}
-}
+if !File.exists?(DB_FILE) || File.zero?(DB_FILE)
+   File.new(DB_FILE, 'w+')
+   db = {}
+else
+   db = YAML.load_file DB_FILE
+end
 
 # Loop through each website in our configuration and see if it's updated.
-config['websites'].each do |site, options|
+config.each do |site, options|
+   next if site == 'debug'
+
    # Is the site already in the database?
-   if db.has_key?(site)
+   if db.has_key? site
       # Make sure we don't check websites too frequently.
       time_since = DateTime.now - DateTime.parse(db[site]['lastcheck'])
       time_since = time_since * 24 * 60
@@ -82,11 +86,11 @@ config['websites'].each do |site, options|
             end
 
             TerminalNotifier.notify(
-               "Skipping #{site}. Rechecking in #{pretty_time}.",
-               :title => "Website Notifier [DEBUG]"
+               "Skipping #{site}. Recheck in #{pretty_time}.",
+               :title => 'Website Notifier [DEBUG]'
             )
 
-            # puts "DEBUG: Skipping #{site}. Rechecking in #{pretty_time}."
+            # puts "[DEBUG] Skipping #{site}. Recheck in #{pretty_time}."
          end
 
          next
@@ -95,11 +99,11 @@ config['websites'].each do |site, options|
       db[site] = {}
 
       TerminalNotifier.notify(
-         "Adding a new website to the database: #{site}",
-         :title => "Website Notifier [DEBUG]"
+         "New website detected: #{site}",
+         :title => 'Website Notifier [DEBUG]'
       ) if config['debug']
 
-      # puts "DEBUG: Adding a new website to the database: #{site}" if config['debug']
+      # puts "[DEBUG] New website detected: #{site}" if config['debug']
    end
 
    # Update the MD5 for any remaining websites.
@@ -111,10 +115,10 @@ config['websites'].each do |site, options|
       TerminalNotifier.notify(
          options['alert'],
          :open => site,
-         :title => "Website Notifier"
+         :title => 'Website Notifier'
       )
 
-      # puts "ALERT: #{options['alert']}"
+      # puts #{options['alert']}
    end
 
    db[site]['md5'] = md5
@@ -122,4 +126,4 @@ config['websites'].each do |site, options|
 end
 
 # Save the updated database.
-File.write(DB_FILE, JSON.generate(db))
+File.write(DB_FILE, db.to_json)
