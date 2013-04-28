@@ -33,6 +33,7 @@ DB_FILE     = 'db.json'
 unless File.exists? CONFIG_FILE
    TerminalNotifier.notify(
       'ERROR: The configuration file does not exist.',
+      :group => 'Website-Notifier-Error',
       :title => 'Website Notifier'
    )
 
@@ -44,6 +45,7 @@ end
 if File.zero? CONFIG_FILE
    TerminalNotifier.notify(
       'ERROR: The configuration file is empty. Did you forget to set it up?',
+      :group => 'Website-Notifier-Error',
       :title => 'Website Notifier'
    )
 
@@ -87,6 +89,7 @@ config.each do |site, options|
 
             TerminalNotifier.notify(
                "Skipping #{site}. Recheck in #{pretty_time}.",
+               :group => site,
                :title => 'Website Notifier [DEBUG]'
             )
 
@@ -100,6 +103,7 @@ config.each do |site, options|
 
       TerminalNotifier.notify(
          "New website detected: #{site}",
+         :group => site,
          :title => 'Website Notifier [DEBUG]'
       ) if config['debug']
 
@@ -114,6 +118,7 @@ config.each do |site, options|
    if db[site].has_key?('md5') && db[site]['md5'] != md5
       TerminalNotifier.notify(
          options['alert'],
+         :group => site,
          :open  => site,
          :title => 'Website Notifier'
       )
