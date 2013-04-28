@@ -1,7 +1,7 @@
-"http://web2.utc.edu/~pbj882/MATH2200-1/MATH2200-1Schedule.pdf":
-  alert     : The Linear Algebra schedule has been updated.
-  frequency : 1440
+"http://example.com/":                       # Website to check for updates
+  alert     : Example.com has been updated.  # Text to display for the notification
+  frequency : 60                             # Frequency (in minutes) to perform the check
 
-"http://web2.utc.edu/~pbj882/MATH2200-1/MATH2200Homework.pdf":
-  alert     : The Linear Algebra homework page has been updated.
-  frequency : 1440
+"http://example.com/page/2/":                # Website to check for updates
+  alert     : The second page was updated.   # Text to display for the notification
+  frequency : 1440                           # Frequency (in minutes) to perform the check
